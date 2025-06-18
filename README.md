@@ -2,7 +2,7 @@
 
 AI-powered editor for accelerated development with intelligent code suggestions and seamless workflow integration.
 
-## 🚀 Features
+## 🚀 Features 
 
 - **AI-Powered Code Editor**: Intelligent code completion and suggestions
 - **Multi-Language Support**: JavaScript, TypeScript, Python, Java, C++, Rust, Go, and more
