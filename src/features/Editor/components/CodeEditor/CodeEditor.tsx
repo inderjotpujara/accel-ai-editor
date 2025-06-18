@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface CodeEditorProps {
@@ -20,15 +22,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
           </div>
-          <div className="text-sm text-gray-400 capitalize">
-            {language}
-          </div>
+          <div className="text-sm text-gray-400 capitalize">{language}</div>
         </div>
       </div>
       <div className="p-4 h-full">
         <textarea
           value={code}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={e => onChange(e.target.value)}
           className="w-full h-full bg-transparent text-green-400 font-mono text-sm leading-relaxed resize-none focus:outline-none"
           spellCheck={false}
           placeholder="Start coding..."

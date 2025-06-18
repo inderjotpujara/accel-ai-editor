@@ -41,23 +41,26 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone git@github.com:inderjotpujara/accel-ai-editor.git
    cd accel-ai-editor
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Start the development server**
+
    ```bash
    npm run dev
    ```
@@ -112,17 +115,20 @@ npm run start
 ## 🎯 Development Guidelines
 
 ### Code Style
+
 - Use functional React components with hooks
 - Follow hook order: useState → useCallback → useEffect
 - Use TypeScript for type safety
 - Follow naming conventions: PascalCase for components, camelCase for functions
 
 ### Testing
+
 - Write tests first (TDD approach)
 - Aim for 80% code coverage
 - Test user interactions, not implementation details
 
 ### Commits
+
 - Follow Conventional Commits format
 - Use pre-commit hooks for code quality
 

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 
@@ -33,7 +35,7 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({
           ×
         </Button>
       </div>
-      
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -41,17 +43,17 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({
           </label>
           <select
             value={language}
-            onChange={(e) => onLanguageChange(e.target.value)}
+            onChange={e => onLanguageChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
           >
-            {LANGUAGES.map((lang) => (
+            {LANGUAGES.map(lang => (
               <option key={lang} value={lang}>
                 {lang.charAt(0).toUpperCase() + lang.slice(1)}
               </option>
             ))}
           </select>
         </div>
-        
+
         <div>
           <h4 className="text-sm font-medium text-gray-700 mb-2">
             AI Assistant
@@ -68,7 +70,7 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({
             </Button>
           </div>
         </div>
-        
+
         <div>
           <h4 className="text-sm font-medium text-gray-700 mb-2">
             Quick Actions

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useCallback } from 'react';
 import { CodeEditor } from './components/CodeEditor';
 import { ToolPanel } from './components/ToolPanel';
