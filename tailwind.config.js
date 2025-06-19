@@ -29,8 +29,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['ui-sans-serif', 'system-ui'],
+        mono: ['ui-monospace', 'SFMono-Regular'],
       },
     },
   },
