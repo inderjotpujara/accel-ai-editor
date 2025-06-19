@@ -21,8 +21,7 @@ export const Button: React.FC<ButtonProps> = ({
   const variantClasses = {
     primary: 'btn-primary',
     secondary: 'btn-secondary',
-    outline:
-      'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
+    outline: 'btn-outline',
   };
 
   const sizeClasses = {
