@@ -72,19 +72,10 @@ const getFileIcon = (fileName: string, language: string) => {
 };
 
 export const CodeEditor: React.FC = () => {
-  const {
-    openFiles,
-    activeFileId,
-    updateFileContent,
-    saveFile,
-    savingFiles,
-    fontSize,
-  } = useEditorStore();
+  const { openFiles, activeFileId, updateFileContent, fontSize } =
+    useEditorStore();
 
   const activeFile = openFiles.find(file => file.id === activeFileId);
-  const isFileSaving = activeFileId
-    ? savingFiles[activeFileId] || false
-    : false;
 
   const handleEditorChange = useCallback(
     (value: string) => {
@@ -95,12 +86,6 @@ export const CodeEditor: React.FC = () => {
     [activeFileId, updateFileContent]
   );
 
-  const handleSave = useCallback(() => {
-    if (activeFileId && activeFile) {
-      saveFile(activeFileId, activeFile.content);
-    }
-  }, [activeFileId, activeFile, saveFile]);
-
   // Create CodeMirror extensions
   const extensions = useMemo(() => {
     const exts = [
@@ -108,6 +93,7 @@ export const CodeEditor: React.FC = () => {
         '&': {
           fontSize: `${fontSize}px`,
           fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+          height: '100%',
         },
         '.cm-content': {
           padding: '16px',
@@ -121,6 +107,7 @@ export const CodeEditor: React.FC = () => {
         },
         '.cm-scroller': {
           fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+          overflow: 'auto !important',
         },
       }),
       EditorView.lineWrapping,
@@ -187,65 +174,18 @@ export const CodeEditor: React.FC = () => {
               {activeFile.language.toUpperCase()}
             </span>
 
-            {/* Saving indicator */}
-            {isFileSaving && (
+            {/* Dirty state indicator (read-only) */}
+            {activeFile.isDirty && (
               <div className="flex items-center space-x-1">
-                <svg
-                  className="animate-spin w-3 h-3 text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                <span className="text-blue-400 text-xs">Saving...</span>
-              </div>
-            )}
-
-            {/* Dirty state indicator */}
-            {activeFile.isDirty && !isFileSaving && (
-              <div className="flex items-center space-x-1">
-                <span className="text-orange-400 text-xs">● (unsaved)</span>
-                <button
-                  onClick={handleSave}
-                  className="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                  title="Save file (Ctrl+S)"
-                >
-                  Save
-                </button>
+                <span className="text-orange-400 text-xs">
+                  ● (unsaved changes)
+                </span>
               </div>
             )}
           </div>
 
           <div className="flex items-center space-x-2">
             <div className="text-xs text-gray-400">{activeFile.path}</div>
-            {!activeFile.isDirty && !isFileSaving && (
-              <div className="text-xs text-green-400 flex items-center space-x-1">
-                <svg
-                  className="w-3 h-3"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>Saved</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -257,7 +197,7 @@ export const CodeEditor: React.FC = () => {
           onChange={handleEditorChange}
           theme={oneDark}
           extensions={extensions}
-          editable={!isFileSaving}
+          editable={true}
           basicSetup={{
             lineNumbers: true,
             foldGutter: true,
@@ -270,8 +210,8 @@ export const CodeEditor: React.FC = () => {
             highlightSelectionMatches: false,
             searchKeymap: true,
           }}
+          height="100%"
           style={{
-            height: '100%',
             fontSize: `${fontSize}px`,
           }}
         />

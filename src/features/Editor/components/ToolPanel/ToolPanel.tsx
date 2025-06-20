@@ -19,8 +19,6 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({ onClose }) => {
     activeFileId,
     refreshFileTree,
     isLoading,
-    saveFile,
-    saveAllFiles,
     loadingFiles,
   } = useEditorStore();
 
@@ -42,28 +40,6 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({ onClose }) => {
             File Operations
           </h4>
           <div className="space-y-2">
-            <Button
-              variant="primary"
-              size="sm"
-              className="w-full"
-              disabled={!activeFile || !activeFile.isDirty || isLoading}
-              onClick={() =>
-                activeFile && saveFile(activeFile.id, activeFile.content)
-              }
-            >
-              Save Current File
-              {activeFile?.isDirty && ' *'}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="w-full"
-              disabled={dirtyFiles.length === 0 || isLoading}
-              onClick={saveAllFiles}
-            >
-              Save All Files
-              {dirtyFiles.length > 0 && ` (${dirtyFiles.length})`}
-            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -95,9 +71,9 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({ onClose }) => {
               <div>
                 <strong>Status:</strong>
                 <span
-                  className={`ml-1 ${activeFile.isDirty ? 'text-orange-500' : 'text-green-500'}`}
+                  className={`ml-1 ${activeFile.isDirty ? 'text-orange-500' : 'text-gray-400'}`}
                 >
-                  {activeFile.isDirty ? 'Modified' : 'Saved'}
+                  {activeFile.isDirty ? 'Modified' : 'Unmodified'}
                 </span>
               </div>
               <div>
@@ -141,34 +117,24 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({ onClose }) => {
                       <span className="text-orange-500 text-xs">●</span>
                     )}
                   </div>
-                  {file.isDirty && (
-                    <button
-                      onClick={() => saveFile(file.id, file.content)}
-                      className="text-xs text-blue-400 hover:text-blue-300"
-                      disabled={isLoading}
-                      title="Save file"
-                    >
-                      Save
-                    </button>
-                  )}
                 </div>
               ))
             )}
           </div>
         </div>
 
-        {/* Dirty Files Summary */}
+        {/* Modified Files Summary */}
         {dirtyFiles.length > 0 && (
           <div className="bg-orange-900/20 p-3 rounded-lg border border-orange-800">
             <div className="flex items-center mb-2">
-              <span className="text-orange-500 text-sm">⚠️</span>
+              <span className="text-orange-500 text-sm">📝</span>
               <span className="text-sm font-medium text-orange-300 ml-2">
-                Unsaved Changes
+                Modified Files
               </span>
             </div>
             <p className="text-xs text-orange-400">
               {dirtyFiles.length} file{dirtyFiles.length > 1 ? 's' : ''} with
-              unsaved changes
+              modifications
             </p>
             <div className="mt-2 space-y-1">
               {dirtyFiles.map(file => (
@@ -204,16 +170,6 @@ export const ToolPanel: React.FC<ToolPanelProps> = ({ onClose }) => {
             Keyboard Shortcuts
           </h4>
           <div className="space-y-1 text-xs text-gray-400">
-            <div>
-              <kbd className="text-xs bg-gray-700 px-1 rounded">Ctrl+S</kbd>{' '}
-              Save current file
-            </div>
-            <div>
-              <kbd className="text-xs bg-gray-700 px-1 rounded">
-                Ctrl+Shift+S
-              </kbd>{' '}
-              Save all files
-            </div>
             <div>
               <kbd className="text-xs bg-gray-700 px-1 rounded">Ctrl+W</kbd>{' '}
               Close current file

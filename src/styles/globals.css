@@ -151,6 +151,7 @@ input:focus-visible {
 /* CodeMirror Editor container improvements */
 .cm-editor {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  height: 100% !important;
 }
 
 .cm-focused {
@@ -168,6 +169,12 @@ input:focus-visible {
 
 .cm-cursor {
   border-left-color: #ffffff;
+}
+
+/* Ensure CodeMirror scroller can scroll */
+.cm-scroller {
+  overflow: auto !important;
+  height: 100% !important;
 }
 
 /* Better loading state */

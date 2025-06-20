@@ -16,7 +16,6 @@ export interface OpenFile {
   language: string;
   isDirty: boolean;
   originalContent?: string;
-  isSaving?: boolean;
   lastModified?: string;
 }
 
@@ -51,16 +50,6 @@ export interface FileContentResponse {
   };
 }
 
-export interface FileSaveResponse {
-  success: boolean;
-  message: string;
-  data: {
-    path: string;
-    size: number;
-    lastModified: string;
-  };
-}
-
 // Editor state interfaces
 export interface EditorState {
   fileTree: FileNode[];
@@ -69,12 +58,12 @@ export interface EditorState {
   fontSize: number;
   isAiAssistEnabled: boolean;
   isFileExplorerOpen: boolean;
+  isDiffViewOpen: boolean;
   isLoading: boolean;
   error: string | null;
   loadingFiles: boolean;
   errorFiles: string | null;
   loadingContent: Record<string, boolean>;
-  savingFiles: Record<string, boolean>;
   activeOperations: Set<string>;
 }
 
@@ -88,8 +77,10 @@ export interface EditorActions {
   closeFile: (fileId: string) => void;
   setActiveFile: (fileId: string) => void;
   updateFileContent: (fileId: string, content: string) => void;
-  saveFile: (fileId: string, content: string) => Promise<void>;
-  saveAllFiles: () => Promise<void>;
+
+  // View operations
+  toggleDiffView: () => void;
+  getDirtyFiles: () => OpenFile[];
 
   // Settings
   setFontSize: (fontSize: number) => void;
@@ -108,15 +99,12 @@ export type EditorStore = EditorState & EditorActions;
 export interface ApiClient {
   getProjectStructure: () => Promise<ProjectStructureResponse>;
   getFileContent: (path: string) => Promise<FileContentResponse>;
-  saveFileContent: (path: string, content: string) => Promise<FileSaveResponse>;
 }
 
 // Configuration types
 export interface EditorConfig {
   apiBaseUrl: string;
   defaultFontSize: number;
-  autoSave: boolean;
-  autoSaveInterval: number;
   supportedLanguages: string[];
   theme: 'light' | 'dark';
 }

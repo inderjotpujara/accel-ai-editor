@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FileNode } from '@/lib/types';
 
-interface FileNode {
-  id: string;
-  name: string;
-  type: 'file' | 'folder';
-  path: string;
-  language?: string;
-  children?: FileNode[];
-}
-
 // Generate unique ID for file nodes
 function generateId(filePath: string): string {
   return Buffer.from(filePath)

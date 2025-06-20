@@ -10,7 +10,6 @@ import {
 import {
   fetchProjectStructure,
   fetchFileContent,
-  saveFileContent,
 } from '../../../lib/api-client';
 
 const initialState: EditorState = {
@@ -20,12 +19,12 @@ const initialState: EditorState = {
   fontSize: 14,
   isAiAssistEnabled: true,
   isFileExplorerOpen: true,
+  isDiffViewOpen: false,
   isLoading: false,
   error: null,
   loadingFiles: false,
   errorFiles: null,
   loadingContent: {},
-  savingFiles: {},
   activeOperations: new Set(),
 };
 
@@ -198,6 +197,7 @@ export const useEditorStore = create<EditorStore>()(
             content: response.data.content,
             language: getLanguageFromExtension(file.path),
             isDirty: false,
+            originalContent: response.data.content,
             lastModified: response.data.lastModified,
           };
 
@@ -258,80 +258,14 @@ export const useEditorStore = create<EditorStore>()(
         }));
       },
 
-      saveFile: async (fileId: string, content: string) => {
-        const operationId = `saveFile:${fileId}`;
-
-        // Prevent duplicate requests
-        if (get().activeOperations.has(operationId)) {
-          return;
-        }
-
-        const file = get().openFiles.find(f => f.id === fileId);
-        if (!file) return;
-
-        try {
-          set(state => ({
-            savingFiles: { ...state.savingFiles, [fileId]: true },
-            activeOperations: new Set(state.activeOperations).add(operationId),
-          }));
-
-          await saveFileContent(file.path, content);
-
-          set(state => ({
-            openFiles: state.openFiles.map(f =>
-              f.id === fileId
-                ? {
-                    ...f,
-                    content,
-                    isDirty: false,
-                    lastModified: new Date().toISOString(),
-                  }
-                : f
-            ),
-            savingFiles: { ...state.savingFiles, [fileId]: false },
-            activeOperations: new Set(
-              Array.from(state.activeOperations).filter(
-                id => id !== operationId
-              )
-            ),
-          }));
-        } catch (error) {
-          console.error('Failed to save file:', error);
-          set(state => ({
-            savingFiles: { ...state.savingFiles, [fileId]: false },
-            activeOperations: new Set(
-              Array.from(state.activeOperations).filter(
-                id => id !== operationId
-              )
-            ),
-          }));
-        }
+      toggleDiffView: () => {
+        set(state => ({
+          isDiffViewOpen: !state.isDiffViewOpen,
+        }));
       },
 
-      saveAllFiles: async () => {
-        const { openFiles, saveFile } = get();
-        const dirtyFiles = openFiles.filter(f => f.isDirty);
-
-        if (dirtyFiles.length === 0) return;
-
-        // Save files one by one to avoid overwhelming the UI
-        // but don't show global loading state
-        set({ error: null });
-
-        try {
-          // Save sequentially to avoid race conditions and provide better UX
-          for (const file of dirtyFiles) {
-            await saveFile(file.id, file.content);
-          }
-        } catch (error) {
-          console.error('Error saving files:', error);
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to save some files',
-          });
-        }
+      getDirtyFiles: () => {
+        return get().openFiles.filter(file => file.isDirty);
       },
 
       setFontSize: (fontSize: number) => {

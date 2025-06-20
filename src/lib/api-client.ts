@@ -1,7 +1,6 @@
 import {
   ProjectStructureResponse,
   FileContentResponse,
-  FileSaveResponse,
   EditorError,
 } from './types';
 
@@ -79,48 +78,6 @@ export class EditorApiClient {
   }
 
   /**
-   * Save file content to API (instant)
-   */
-  async saveFileContent(
-    path: string,
-    content: string
-  ): Promise<FileSaveResponse> {
-    if (!path || content === undefined) {
-      throw new Error('File path and content are required');
-    }
-
-    try {
-      const response = await fetch(`${this.baseUrl}/api/files/content`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ path, content }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ error: response.statusText }));
-        throw new Error(
-          errorData.error || `HTTP ${response.status}: ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to save file');
-      }
-
-      return data as FileSaveResponse;
-    } catch (error) {
-      console.error(`Error saving file content for ${path}:`, error);
-      throw this.createError('FILE_SAVE_ERROR', error);
-    }
-  }
-
-  /**
    * Create standardized error object
    */
   private createError(code: string, originalError: any): EditorError {
@@ -161,13 +118,6 @@ export const apiClient = new EditorApiClient();
 export const fetchProjectStructure = () => apiClient.getProjectStructure();
 export const fetchFileContent = (path: string) =>
   apiClient.getFileContent(path);
-export const saveFileContent = (path: string, content: string) =>
-  apiClient.saveFileContent(path, content);
 
 // Export types for consumers
-export type {
-  ProjectStructureResponse,
-  FileContentResponse,
-  FileSaveResponse,
-  EditorError,
-};
+export type { ProjectStructureResponse, FileContentResponse, EditorError };
